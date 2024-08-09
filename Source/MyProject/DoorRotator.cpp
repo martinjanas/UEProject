@@ -46,7 +46,10 @@ void UDoorRotator::TickComponent(float DeltaTime, ELevelTick TickType, FActorCom
 
     // If the door reaches the target rotation, toggle the opening/closing flag
     if (FMath::IsNearlyEqual(door_mesh_comp->GetRelativeRotation().Yaw, target_rotation.Yaw, 1.0f))
+    {
         bIsOpening = !bIsOpening;
+        //door_mesh_comp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    }
 
     //FRotator new_rotation = FMath::InterpEaseInOut(door_mesh_comp->GetRelativeRotation(), target_rotation, DeltaTime, 0.8f);
 

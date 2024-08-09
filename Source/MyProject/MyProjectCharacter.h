@@ -73,19 +73,22 @@ public:
 	UFUNCTION(BlueprintCallable, Category = Weapon)
 	bool GetHasRifle();
 
-	float curtime;
-	bool is_sprinting;
+	float m_flCurtime;
+	bool m_bIsSprinting;
 
 protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
 	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value); 
+	void HealPlayer();
 
-	void Sprint();
+	UFUNCTION(BlueprintCallable)
+	void StartSprint();
+
 	void StopSprint();
-
+	
 protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
@@ -96,8 +99,5 @@ public:
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
-	UHealthComponent* GetHealthComponent() const { return HealthComponent; }
-
 };
 

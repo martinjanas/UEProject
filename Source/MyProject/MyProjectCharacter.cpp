@@ -41,9 +41,11 @@ AMyProjectCharacter::AMyProjectCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	m_bIsSprinting = false;
+
 	HealthComponent = CreateDefaultSubobject<UHealthComponent>(L"HealthComponent");
 
-	curtime = 0.f;
+	m_flCurtime = 0.f;
 }
 
 void AMyProjectCharacter::BeginPlay()
@@ -66,19 +68,14 @@ void AMyProjectCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	curtime += DeltaSeconds;
+	m_flCurtime += DeltaSeconds;
 
-	if (curtime >= 3.f)
+	if (m_flCurtime >= 3.f)
 	{
-		curtime = 0.f;
+		/*HealthComponent->ApplyDamage(1, 3);
+		HealthComponent->TryDestroyTarget(this);*/
 
-		const auto health_comp = GetHealthComponent();
-
-		if (!health_comp)
-			return;
-		
-		health_comp->ApplyDamage(1, 3);
-		health_comp->TryDestroyTarget(this);
+		m_flCurtime = 0.f;
 	}
 }
 
@@ -98,7 +95,8 @@ void AMyProjectCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMyProjectCharacter::Look);
-		PlayerInputComponent->BindKey(EKeys::LeftShift, IE_Pressed, this, &AMyProjectCharacter::Sprint);
+		PlayerInputComponent->BindKey(EKeys::R, IE_Pressed, this, &AMyProjectCharacter::HealPlayer);
+		PlayerInputComponent->BindKey(EKeys::LeftShift, IE_Pressed, this, &AMyProjectCharacter::StartSprint);
 		PlayerInputComponent->BindKey(EKeys::LeftShift, IE_Released, this, &AMyProjectCharacter::StopSprint);
 	}
 	else
@@ -116,7 +114,7 @@ void AMyProjectCharacter::Move(const FInputActionValue& Value)
 	
 	if (Controller != nullptr)
 	{
-		GetCharacterMovement()->MaxWalkSpeed = is_sprinting ? 1200.f : 600.f;
+		GetCharacterMovement()->MaxWalkSpeed = m_bIsSprinting ? 1200.f : 600.f;
 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
 		AddMovementInput(GetActorRightVector(), MovementVector.X);
@@ -136,14 +134,20 @@ void AMyProjectCharacter::Look(const FInputActionValue& Value)
 	}
 }
 
-void AMyProjectCharacter::Sprint()
+void AMyProjectCharacter::HealPlayer()
 {
-	is_sprinting = true;
+	if (HealthComponent)
+		HealthComponent->health = 100;
+}
+
+void AMyProjectCharacter::StartSprint()
+{
+	m_bIsSprinting = true;
 }
 
 void AMyProjectCharacter::StopSprint()
 {
-	is_sprinting = false;
+	m_bIsSprinting = false;
 }
 
 void AMyProjectCharacter::SetHasRifle(bool bNewHasRifle)

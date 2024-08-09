@@ -27,6 +27,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	int health;
 
+	UFUNCTION(BlueprintCallable)
+	void SetHealth()
+	{
+		health = 100;
+	}
+
 	void ApplyDamage(int min_damage, int max_damage)
 	{
 		health -= rand() % (max_damage - min_damage + 1) + min_damage;
