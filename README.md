@@ -1,3 +1,1 @@
-# UEProject
-
-My Unreal Engine project for learning
+### UEProject - My learning project in Unreal Engine
